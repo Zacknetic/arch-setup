@@ -8,25 +8,75 @@
 
 ## Phase 1: Install Arch
 
-1. Boot from Arch USB
-2. Connect to network (ethernet auto-connects, or use `iwctl` for wifi)
-3. Download configs:
+Boot from Arch USB, then copy-paste this entire block:
+
 ```
-curl -LO https://raw.githubusercontent.com/Zacknetic/arch-setup/main/user_configuration.json
-curl -LO https://raw.githubusercontent.com/Zacknetic/arch-setup/main/user_credentials.json
+curl -LO https://raw.githubusercontent.com/Zacknetic/arch-setup/main/user_configuration.json && curl -LO https://raw.githubusercontent.com/Zacknetic/arch-setup/main/user_credentials.json && nano user_credentials.json
 ```
-4. **Edit credentials:** `nano user_credentials.json` — set real passwords
-5. Run: `archinstall --config user_configuration.json --creds user_credentials.json`
-6. Disk config: select `nvme0n1`, wipe, btrfs. **DO NOT select nvme1n1 (Windows)**
-7. Reboot when done, remove USB.
+
+Change the two passwords in nano, save (Ctrl+O, Enter, Ctrl+X), then run:
+
+```
+archinstall --config user_configuration.json --creds user_credentials.json
+```
+
+When prompted for disk config:
+- Select `nvme0n1` (1.8TB NVMe — this has Fedora)
+- Choose **Wipe all selected drives**
+- Filesystem: **btrfs** with compression
+- **TRIPLE CHECK you are NOT selecting nvme1n1 (Windows)**
+
+Reboot when done. Remove USB.
 
 ## Phase 2: Post-Install
 
-1. Login at TTY as `zack`
-2. Run:
+Login at TTY as `zack`, then copy-paste:
+
 ```
-curl -LO https://raw.githubusercontent.com/Zacknetic/arch-setup/main/post-install.sh
-bash post-install.sh
+curl -LO https://raw.githubusercontent.com/Zacknetic/arch-setup/main/post-install.sh && bash post-install.sh
+```
+
+When done:
+
+```
 sudo reboot
 ```
-3. SDDM starts. Select **Hyprland** and login.
+
+SDDM starts. Select **Hyprland** and login.
+
+## Key Bindings
+
+| Key | Action |
+|-----|--------|
+| SUPER + Return | Terminal (Kitty) |
+| SUPER + Space | App launcher (Rofi) |
+| SUPER + Q | Close window |
+| SUPER + E | File manager (Thunar) |
+| SUPER + F | Fullscreen |
+| SUPER + V | Toggle floating |
+| SUPER + 1-0 | Switch workspace |
+| SUPER + SHIFT + 1-0 | Move window to workspace |
+| Print | Screenshot (select area) |
+| SUPER + drag | Move window |
+| SUPER + right-drag | Resize window |
+
+## Hardware Notes
+
+- **GPU**: RTX 4070 — nvidia-dkms with mkinitcpio hooks (auto-rebuilds on kernel update)
+- **Webcam**: Logitech BRIO — PipeWire config hides IR camera to prevent app crashes
+- **Dual Boot**: Windows on nvme1n1 untouched. Use UEFI boot menu (F8/F12) to switch OS.
+
+## Recovery
+
+If Hyprland doesn't start:
+1. `Ctrl+Alt+F2` for TTY
+2. Login as zack or root
+3. Check: `journalctl -b | grep -i nvidia`
+4. Rebuild: `sudo mkinitcpio -P`
+5. Emergency: add `nvidia.modeset=0` to boot params for basic mode
+
+## What's Installed
+
+**Phase 1 (archinstall):** base system, linux kernel, systemd-boot, NetworkManager, PipeWire audio, NVIDIA drivers, bluetooth, Docker, Flatpak, Firefox, dev tools
+
+**Phase 2 (post-install.sh):** Hyprland, Waybar, Rofi, Kitty, Thunar, Mako notifications, SDDM, paru (AUR helper), Equibop (Discord), VS Code, Claude Code, JetBrains Mono Nerd Font, Tokyo Night color scheme
