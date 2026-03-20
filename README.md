@@ -14,17 +14,32 @@ Boot from Arch USB, then copy-paste this entire block:
 curl -LO https://raw.githubusercontent.com/Zacknetic/arch-setup/main/user_configuration.json && curl -LO https://raw.githubusercontent.com/Zacknetic/arch-setup/main/user_credentials.json && nano user_credentials.json
 ```
 
-Change the two passwords in nano, save (Ctrl+O, Enter, Ctrl+X), then run:
+Change the two passwords in nano, save (Ctrl+O, Enter, Ctrl+X).
+
+### BEFORE running archinstall — verify which drive is which:
+
+```
+lsblk -f
+```
+
+Look at the output:
+- The **Windows** drive will have `ntfs` partitions — this is `nvme1n1`. DO NOT TOUCH.
+- The **Fedora** drive will have `btrfs` and `ext4` partitions — this is `nvme0n1`. Install here.
+- Fedora root partition UUID from our install: `a6f038d3-0703-42d9-9570-086acfb4861a`
+
+If the drives are swapped from what's listed above, adjust accordingly. **Trust the filesystem types, not the device names.**
+
+Now run:
 
 ```
 archinstall --config user_configuration.json --creds user_credentials.json
 ```
 
 When prompted for disk config:
-- Select `nvme0n1` (1.8TB NVMe — this has Fedora)
+- Select the drive with btrfs/ext4 (the Fedora drive)
 - Choose **Wipe all selected drives**
 - Filesystem: **btrfs** with compression
-- **TRIPLE CHECK you are NOT selecting nvme1n1 (Windows)**
+- **TRIPLE CHECK you are NOT selecting the ntfs (Windows) drive**
 
 Reboot when done. Remove USB.
 
@@ -64,7 +79,7 @@ SDDM starts. Select **Hyprland** and login.
 
 - **GPU**: RTX 4070 — nvidia-dkms with mkinitcpio hooks (auto-rebuilds on kernel update)
 - **Webcam**: Logitech BRIO — PipeWire config hides IR camera to prevent app crashes
-- **Dual Boot**: Windows on nvme1n1 untouched. Use UEFI boot menu (F8/F12) to switch OS.
+- **Dual Boot**: Windows on other NVMe untouched. Use UEFI boot menu (F8/F12) to switch OS.
 
 ## Recovery
 
