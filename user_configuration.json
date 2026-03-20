@@ -1,0 +1,48 @@
+{
+    "additional-repositories": ["multilib"],
+    "archinstall-language": "English",
+    "audio_config": {
+        "audio": "pipewire"
+    },
+    "bootloader": "Systemd-boot",
+    "debug": false,
+    "hostname": "archbox",
+    "kernels": ["linux"],
+    "locale_config": {
+        "kb_layout": "us",
+        "sys_enc": "utf-8",
+        "sys_lang": "en_US"
+    },
+    "network_config": {
+        "type": "nm"
+    },
+    "no_pkg_lookups": false,
+    "ntp": true,
+    "packages": [
+        "git", "base-devel", "vim", "nano", "htop", "btop", "fastfetch",
+        "wget", "curl", "unzip", "zip", "ntfs-3g", "os-prober", "firefox",
+        "nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings",
+        "linux-headers", "v4l-utils",
+        "pipewire-pulse", "pipewire-alsa", "pipewire-jack", "wireplumber",
+        "xdg-desktop-portal", "xdg-desktop-portal-hyprland", "xdg-desktop-portal-gtk",
+        "xdg-user-dirs", "polkit-gnome", "gnome-keyring", "networkmanager",
+        "bluez", "bluez-utils", "brightnessctl",
+        "grim", "slurp", "wl-clipboard", "cliphist", "mako", "kitty",
+        "thunar", "gvfs", "tumbler", "ffmpegthumbnailer",
+        "flatpak", "docker", "docker-compose"
+    ],
+    "parallel downloads": 5,
+    "profile_config": null,
+    "swap": true,
+    "timezone": "Asia/Tokyo",
+    "custom-commands": [
+        "systemctl enable NetworkManager",
+        "systemctl enable bluetooth",
+        "systemctl enable docker",
+        "usermod -aG docker zack",
+        "sed -i 's/^MODULES=()/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf",
+        "mkinitcpio -P",
+        "mkdir -p /etc/modprobe.d",
+        "echo 'options nvidia_drm modeset=1 fbdev=1' > /etc/modprobe.d/nvidia.conf"
+    ]
+}
